@@ -17,7 +17,7 @@ function pets_cats_menu() {
       'page arguments' => array(1),
       'access callback' => 'user_access',
       'type' => MENU_CALLBACK, // No navigation entry, just handle the request.
-      'access arguments' => array('administer access control'),
+      'access arguments' => array('administer pets_cats'),
     ),   
     'cats/%' => array(
       'title' => 'Cats',
@@ -25,6 +25,14 @@ function pets_cats_menu() {
       'page arguments' => array(1),
       'access callback' => TRUE, // Just let anyone see it.
       'type' => MENU_CALLBACK, // No navigation entry, just handle the request.
+    ),
+    'cats/%/delete' => array(
+      'title' => 'Delete',
+      'page callback' => 'pets_cats_delete',
+      'page arguments' => array(1),
+      'access callback' => 'user_access',
+      'type' => MENU_CALLBACK, // No navigation entry, just handle the request.
+      'access arguments' => array('administer pets_cats'),
     ),
     'cats/%/description' => array(
       'title' => 'About',
@@ -62,7 +70,7 @@ function pets_cats_menu() {
 * @return array An array of valid permissions for the onthisdate module
 */
 function pets_cats_perm() {
-  return array('access pets_cats content', 'administer pets_cats content');
+  return array('access pets_cats content', 'administer pets_cats');
 }
 
 function pets_cats_select() {
@@ -70,7 +78,26 @@ function pets_cats_select() {
 	
 	$result = db_query_range('SELECT * FROM {pets_cats_cats}', 0, 10);
 	while ($node = db_fetch_object($result)) {
-		$returnValue .= l($node->name, 'cats/' . $node->name) . "<br />";
+		$returnValue .= l($node->name, 'cats/' . $node->name);
+		
+		// Show a delete link if there's permissions to
+		if(user_access('administer pets_cats'))
+		{
+			// Need to add in theme formatting here
+			$returnValue .= "     " . l("(delete)", 'cats/' . $node->name . "/delete");
+		}
+		
+		$returnValue .=  "<br />";
+	}
+
+	// Show an Add link if there's permissions to.
+
+	if(user_access('administer pets_cats'))
+	{
+		// Need to add in theme formatting here
+		$returnValue .=  "<br />";
+		$returnValue .=  "<br />";
+		$returnValue .= l("Add Cat", 'cats/add');
 	}
 
 	return $returnValue;
@@ -82,24 +109,18 @@ function pets_cats_select() {
 function pets_cats_about($cat_id) {
 	$output = '';
 
-
-	
-	$result = db_query_range("SELECT * FROM {pets_cats_cats} c WHERE c.name = '$cat_id'", 0, 10);
+	$result = db_query("SELECT * FROM {pets_cats_cats} c WHERE c.name = '$cat_id'");
 
 	if ($node = db_fetch_object($result)) {
 		$output .= "This is about Cat " . $node->name . ".<br />";
 
-	
 		//$returnValue .= l($node->name, 'cats/' . $node->name) . "<br />";
 	}
 	else {
 		drupal_set_message(t('That cat doesn\'t exist.'));
 	}
 	
-	
-
-
-  return $output;
+	return $output;
 }
 
 function pets_cats_maint($cat_id) {
@@ -121,6 +142,32 @@ function pets_cats_add($cat_id) {
     $page_content .= drupal_get_form('pets_cats_add_form');
 	
 	return $page_content;
+}
+
+function pets_cats_delete($cat_id) {
+    // Really need a confirmation here
+	
+	$output = '';
+	
+	$result = db_query("SELECT * FROM {pets_cats_cats} WHERE name = '$cat_id'");
+
+	if ($node = db_fetch_object($result)) {
+		
+		$result2 = db_query("DELETE FROM {pets_cats_cats} WHERE id = '%d'", $node->id);
+		
+		if($result2)
+			$output .= "$cat_id was deleted.<br />";
+		else
+			$output .= "There was an error.<br />";
+	}
+	else {
+		$output .= "That cat doesn't exist.<br />";
+	}
+	
+
+
+	
+	return $output;
 }
 
 function pets_cats_add_form_submit($form, &$form_state) {
