@@ -112,9 +112,18 @@ function pets_cats_about($cat_id) {
 	$result = db_query("SELECT * FROM {pets_cats_cats} c WHERE c.name = '$cat_id'");
 
 	if ($node = db_fetch_object($result)) {
-		$output .= "This is about Cat " . $node->name . ".<br />";
-
-		//$returnValue .= l($node->name, 'cats/' . $node->name) . "<br />";
+		$output .= $node->name . ".<br />";
+		$output .= $node->description . "<br />";
+		$output .= "<br />";
+		$output .= "Breed: "	. $node->breed	. "<br />";
+		$output .= "Sex: "		. $node->sex	. "<br />";
+		$output .= "Date Born: ". date("F j, Y", $node->born)	. "<br />";
+		$output .= "Date Aquired: "	. date("F j, Y", $node->aquired)	. "<br />";
+		$output .= "Aquired From: "	. $node->aquiredfrom	. "<br />";
+		
+		// Things to add:
+		// Last update
+		
 	}
 	else {
 		drupal_set_message(t('That cat doesn\'t exist.'));
@@ -163,10 +172,7 @@ function pets_cats_delete($cat_id) {
 	else {
 		$output .= "That cat doesn't exist.<br />";
 	}
-	
 
-
-	
 	return $output;
 }
 
