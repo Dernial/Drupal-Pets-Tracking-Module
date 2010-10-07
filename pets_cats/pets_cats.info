@@ -1,0 +1,9 @@
+; $Id$
+name = Pets Cats
+description = Track your cats. Part of the Pets Suite.
+core = 6.x
+
+dependencies[] = menu
+; dependencies[] = pets_calendar
+
+package = "Pets Suite"

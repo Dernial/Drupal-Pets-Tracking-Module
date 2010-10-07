@@ -1,0 +1,61 @@
+<?php
+// $Id$
+
+/**
+* Install the test_module module, including it's content (node)
+* type.
+* @file
+*/
+
+/**
+* Implementation of hook_install()
+*/
+function pets_cats_install() {
+    drupal_install_schema('pets_cats');
+    db_query("DELETE FROM {cache}");
+}
+
+/**
+* Implementation of hook_uninstall()
+*/
+function pets_cats_uninstall() {
+    drupal_uninstall_schema('pets_cats');
+}
+
+/**
+* Implementation of hook_schema()
+* @return array of Schema API table definitions.
+*/
+function pets_cats_schema() {
+/*
+
+CREATE TABLE `lotnpets`.`lotn_module_cats_cats` (
+`id` SERIAL NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+`name` TEXT NOT NULL ,
+`breed` TEXT NOT NULL ,
+`born` TIMESTAMP NOT NULL ,
+`recieved` TIMESTAMP NOT NULL ,
+`cost` FLOAT NOT NULL
+) ENGINE = MYISAM ;
+
+*/
+	
+    $schema['pets_cats_cats'] = array(
+        'fields' => array(
+            'id' => array('type' => 'serial', 'size' => 'big', 'unsigned' => TRUE, 'not null' => TRUE,
+                'description'=> "Cat ID"),
+			'name' => array('type' => 'text', 'not null' => TRUE),
+			'breed' => array('type' => 'text', 'not null' => FALSE),
+			'description' => array('type' => 'text', 'not null' => FALSE),
+            'born' => array('type' => 'int', 'not null' => TRUE, 'default' => 0,
+                'description'=> "Timestamp (Unix Timestamp, which is limited to values above Jan 1, 1970)"),
+            'recieved' => array('type' => 'int', 'not null' => TRUE, 'default' => 0,
+                'description'=> "Timestamp (Unix Timestamp, which is limited to values above Jan 1, 1970)"),
+            'cost' => array('type' => 'float', 'unsigned' => TRUE, 'not null' => FALSE,),  //NOTE:  On MySQL, text fields cannot have default values.
+        ),
+        'primary key' => array('id') //Don't put a comma after primary key definition, since doing so will cause database errors.
+    );
+   
+    return $schema;
+}
+?>

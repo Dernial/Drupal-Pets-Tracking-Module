@@ -1,0 +1,6 @@
+; $Id$
+name = Pets Calendar
+description = A calendar of events for your pets modules.
+core = 6.x
+
+package = "Pets Suite"
