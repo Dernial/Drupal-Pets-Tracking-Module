@@ -171,12 +171,13 @@ function pets_cats_delete($cat_id) {
 }
 
 function pets_cats_add_form_submit($form, &$form_state) {
-	db_query("INSERT INTO {pets_cats_cats} (name, breed, sex, born, recieved, description, cost) VALUES ('%s', '%s', '%s', %d, %d, '%s', %f)", 
+	db_query("INSERT INTO {pets_cats_cats} (name, breed, sex, born, recieved, recievedFrom, description, cost) VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', %f)", 
 				$form_state['values']['name'],
 				$form_state['values']['breed'],
 				$form_state['values']['sex'],
 				mktime(0, 0, 0, $form_state['values']['born']['month'], $form_state['values']['born']['day'], $form_state['values']['born']['year']),
 				mktime(0, 0, 0, $form_state['values']['aquired']['month'], $form_state['values']['aquired']['day'], $form_state['values']['aquired']['year']),
+				$form_state['values']['aquiredfrom'],
 				$form_state['values']['description'],
 				$form_state['values']['cost']
 				);
@@ -217,7 +218,12 @@ function pets_cats_add_form($form_state) {
         '#title' => t('Aquired'),
         '#description' => t("The date the cat was aquired."),
     );
-    $form['cost'] = array(
+    $form['aquiredfrom'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Aquired From'),
+        '#description' => t("Where you got the cat."),
+    );
+	$form['cost'] = array(
         '#type' => 'textfield',
         '#title' => t('Cost'),
         '#description' => t("What the cost was to purchase or adopt."),
