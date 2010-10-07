@@ -29,33 +29,36 @@ function pets_cats_uninstall() {
 function pets_cats_schema() {
 /*
 
-CREATE TABLE `lotnpets`.`lotn_module_cats_cats` (
-`id` SERIAL NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-`name` TEXT NOT NULL ,
-`breed` TEXT NOT NULL ,
-`born` TIMESTAMP NOT NULL ,
-`recieved` TIMESTAMP NOT NULL ,
-`cost` FLOAT NOT NULL
-) ENGINE = MYISAM ;
+CREATE TABLE `pets_cats_cats` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` text NOT NULL,
+  `breed` text NOT NULL,
+  'sex' text NOT NULL,
+  `description` text NOT NULL,
+  `born` int(11) NOT NULL DEFAULT '0',
+  `received` int(11) NOT NULL DEFAULT '0',
+  `cost` float unsigned DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
 
 */
 	
-    $schema['pets_cats_cats'] = array(
-        'fields' => array(
-            'id' => array('type' => 'serial', 'size' => 'big', 'unsigned' => TRUE, 'not null' => TRUE,
-                'description'=> "Cat ID"),
+	$schema['pets_cats_cats'] = array(
+		'fields' => array(
+			'id' => array('type' => 'serial', 'size' => 'big', 'unsigned' => TRUE, 'not null' => TRUE, 'description'=> "Cat ID"),
 			'name' => array('type' => 'text', 'not null' => TRUE),
 			'breed' => array('type' => 'text', 'not null' => FALSE),
+			'sex' => array('type' => 'text', 'not null' => FALSE),
 			'description' => array('type' => 'text', 'not null' => FALSE),
-            'born' => array('type' => 'int', 'not null' => TRUE, 'default' => 0,
-                'description'=> "Timestamp (Unix Timestamp, which is limited to values above Jan 1, 1970)"),
-            'recieved' => array('type' => 'int', 'not null' => TRUE, 'default' => 0,
-                'description'=> "Timestamp (Unix Timestamp, which is limited to values above Jan 1, 1970)"),
-            'cost' => array('type' => 'float', 'unsigned' => TRUE, 'not null' => FALSE,),  //NOTE:  On MySQL, text fields cannot have default values.
-        ),
-        'primary key' => array('id') //Don't put a comma after primary key definition, since doing so will cause database errors.
-    );
-   
-    return $schema;
+			'born' => array('type' => 'int', 'not null' => TRUE, 'default' => 0,
+			'description'=> "Timestamp (Unix Timestamp, which is limited to values above Jan 1, 1970)"),
+			'recieved' => array('type' => 'int', 'not null' => TRUE, 'default' => 0,
+			'description'=> "Timestamp (Unix Timestamp, which is limited to values above Jan 1, 1970)"),
+			'cost' => array('type' => 'float', 'unsigned' => TRUE, 'not null' => FALSE,),  //NOTE:  On MySQL, text fields cannot have default values.
+		),
+		'primary key' => array('id') //Don't put a comma after primary key definition, since doing so will cause database errors.
+	);
+
+	return $schema;
 }
 ?>

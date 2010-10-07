@@ -124,9 +124,10 @@ function pets_cats_add($cat_id) {
 }
 
 function pets_cats_add_form_submit($form, &$form_state) {
-	db_query("INSERT INTO {pets_cats_cats} (name, breed, born, recieved, description, cost) VALUES ('%s', '%s', %d, %d, '%s', %f)", 
+	db_query("INSERT INTO {pets_cats_cats} (name, breed, sex, born, recieved, description, cost) VALUES ('%s', '%s', '%s', %d, %d, '%s', %f)", 
 				$form_state['values']['name'],
 				$form_state['values']['breed'],
+				$form_state['values']['sex'],
 				mktime(0, 0, 0, $form_state['values']['born']['month'], $form_state['values']['born']['day'], $form_state['values']['born']['year']),
 				mktime(0, 0, 0, $form_state['values']['aquired']['month'], $form_state['values']['aquired']['day'], $form_state['values']['aquired']['year']),
 				$form_state['values']['description'],
@@ -134,6 +135,8 @@ function pets_cats_add_form_submit($form, &$form_state) {
 				);
 				
 	drupal_set_message(t('Your cat has been saved.'));
+	
+	$form_state['redirect'] = 'cats';
 }
 
 function pets_cats_add_form($form_state) {
@@ -148,6 +151,15 @@ function pets_cats_add_form($form_state) {
         '#title' => t('Breed'),
         '#description' => t("The cat's breed."),
     );
+    $form['sex'] = array(
+        '#type' => 'select',
+        '#title' => t('Sex'),
+        '#description' => t("The cat's sex."),
+		'#options' => array(
+			'male' => t('Male'),
+			'female' => t('Female'),
+		),
+	);
 	$form['born'] = array(
         '#type' => 'date',
         '#title' => t('Birthdate'),
