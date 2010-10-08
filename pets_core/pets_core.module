@@ -59,12 +59,12 @@ function pets_core_add_animal($animaltype, $animalinfo)
 * @param array $animalinfo multitude of information needed to add animal
 * @return bool true if successfull, false if not
 */
-function pets_core_delete_animal($animaltype, $animalinfo)
+function pets_core_delete_animal($animaltype, $animalname)
 {
 	$returnValue = false;
 	
 	$result = pets_core_get_animal($animaltype, $animalname);
-	$returnValue = db_query("DELETE FROM {pets_animals} WHERE id = '". $result->id . "'"); 
+	$returnValue = db_query("DELETE FROM {pets_animals} WHERE id = '". $result[0]->id . "'"); 
 				
 	return $returnValue;
 }

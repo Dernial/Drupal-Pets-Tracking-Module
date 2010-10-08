@@ -122,8 +122,6 @@ function pets_cats_about($cat_id) {
 
 	$result = module_invoke("pets_core", "get_animal", "cat", $cat_id);
 	
-	print_r($result);
-	
 	if ($result[0]) {
 		$output .= theme("about", $result[0]);
 
@@ -163,20 +161,10 @@ function pets_cats_delete($cat_id) {
 	
 	$output = '';
 	
-	$result = db_query("SELECT * FROM {pets_cats_cats} WHERE name = '$cat_id'");
-
-	if ($node = db_fetch_object($result)) {
-		
-		$result2 = db_query("DELETE FROM {pets_cats_cats} WHERE id = '%d'", $node->id);
-		
-		if($result2)
-			$output .= "$cat_id was deleted.<br />";
-		else
-			$output .= "There was an error.<br />";
-	}
-	else {
-		$output .= "That cat doesn't exist.<br />";
-	}
+	$result = module_invoke("pets_core", "delete_animal", "cat", $cat_id);
+				
+	if($result) drupal_set_message(t('Your cat has been deleted.'));
+	else drupal_set_message(t('There was an error deleting the cat.'));
 
 	return $output;
 }
