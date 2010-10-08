@@ -3,7 +3,7 @@
 ?>
 
 <div>
-<?php if(user_access('administer pets_cats')) print l("(edit)", 'cats/' . $catinfo->name . "/edit") . "<br />"; ?>
+<?php if(user_access('administer pets_cats')) print l("(edit)", 'cats/' . $catinfo->id . "/edit") . "<br />"; ?>
 <?php print $catinfo->name; ?><br />
 <?php print $catinfo->description; ?><br />
 <br />

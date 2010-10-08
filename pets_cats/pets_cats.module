@@ -165,16 +165,29 @@ function pets_cats_add($cat_id) {
 }
 
 function pets_cats_delete($cat_id) {
-    // Really need a confirmation here
+    $page_content = '';
+   
+    $page_content .= drupal_get_form('pets_cats_delete_form', $cat_id);
 	
-	$output = '';
+	return $page_content;
+}
+
+function pets_cats_delete_form($form_state, $cat_id) {
+		$form['id'] = array(
+        '#type' => 'hidden',
+        '#value' =>  $cat_id,
+    );
 	
-	$result = module_invoke("pets_core", "delete_animal", "cat", $cat_id);
+	return confirm_form($form,'You Sure?','cats','','Yes','Cancel');
+}
+
+function pets_cats_delete_form_submit($form, &$form_state) {
+	$result = module_invoke("pets_core", "delete_animal", "cat", $form_state['values']['id']);
 				
 	if($result) drupal_set_message(t('Your cat has been deleted.'));
 	else drupal_set_message(t('There was an error deleting the cat.'));
 
-	return $output;
+	$form_state['redirect'] = 'cats';
 }
 
 function pets_cats_add_form_submit($form, &$form_state) {
@@ -262,12 +275,14 @@ function pets_cats_edit_form_submit($form, &$form_state) {
 	$animalData['born'] = mktime(0, 0, 0, $form_state['values']['born']['month'], $form_state['values']['born']['day'], $form_state['values']['born']['year']);
 	$animalData['aquired'] = mktime(0, 0, 0, $form_state['values']['aquired']['month'], $form_state['values']['aquired']['day'], $form_state['values']['aquired']['year']);
 	
-	$result = module_invoke("pets_core", "edit_animal", "cat", $form_state['oldname'], $animalData);
+	//dvm($animalData);
+	
+	$result = module_invoke("pets_core", "update_animal", "cat", $form_state['values']['oldname'], $animalData);
 				
 	if($result) drupal_set_message(t('Your cat has been saved.'));
 	else drupal_set_message(t('There was an error saving the changes.'));
 	
-	//$form_state['redirect'] = 'cats';
+	$form_state['redirect'] = 'cats';
 }
 
 function pets_cats_edit_form($form_state, $cat_id) {

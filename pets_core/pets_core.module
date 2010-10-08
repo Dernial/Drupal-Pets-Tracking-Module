@@ -7,7 +7,7 @@
 * @param string $animalname optional name of animal. If null will return an array of the type of animal. 
 * @return array An array of animal information based on passed in parameters
 */
-function pets_core_get_animal($animaltype = null, $animalname = null)
+function pets_core_get_animal($animaltype = null, $animalid = null)
 {
 	$returnValue = null;
 	
@@ -15,8 +15,8 @@ function pets_core_get_animal($animaltype = null, $animalname = null)
 	{
 		$query = "SELECT * FROM {pets_animals} WHERE type = '$animaltype'";
 		
-		if($animalname)
-			$query .= " AND name = '$animalname'";
+		if($animalid)
+			$query .= " AND id = '$animalid'";
 		
 		$result = db_query($query);
 		
@@ -60,11 +60,11 @@ function pets_core_add_animal($animaltype, $animalinfo)
 * @param array $animalinfo multitude of information needed to add animal
 * @return bool true if successfull, false if not
 */
-function pets_core_update_animal($animaltype, $animalname, $animalinfo)
+function pets_core_update_animal($animaltype, $animalid, $animalinfo)
 {
-	$returnValue = false;
 
-	$result = pets_core_get_animal($animaltype, $animalname);	
+	
+	$returnValue = false;
 	
 	$returnValue = db_query("UPDATE {pets_animals} SET 
 							`name` = '%s', 
@@ -87,7 +87,7 @@ function pets_core_update_animal($animaltype, $animalname, $animalinfo)
 					$animalinfo['aquiredfrom'],
 					$animalinfo['description'],
 					$animalinfo['cost'],
-					$result[0]['id']
+					$animalid
 				);
 				
 	return $returnValue;
@@ -99,12 +99,11 @@ function pets_core_update_animal($animaltype, $animalname, $animalinfo)
 * @param array $animalinfo multitude of information needed to add animal
 * @return bool true if successfull, false if not
 */
-function pets_core_delete_animal($animaltype, $animalname)
+function pets_core_delete_animal($animaltype, $animalid)
 {
 	$returnValue = false;
 	
-	$result = pets_core_get_animal($animaltype, $animalname);
-	$returnValue = db_query("DELETE FROM {pets_animals} WHERE id = '". $result[0]->id . "'"); 
+	$returnValue = db_query("DELETE FROM {pets_animals} WHERE id = '". $animalid . "'"); 
 				
 	return $returnValue;
 }
