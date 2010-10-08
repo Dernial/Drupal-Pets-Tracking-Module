@@ -54,6 +54,46 @@ function pets_core_add_animal($animaltype, $animalinfo)
 }
 
 /**
+* API Call - Updates an animal in the database
+* @param string $animaltype type of animal. If null returns null. 
+* @param string $animalname name of animal. If null returns null. 
+* @param array $animalinfo multitude of information needed to add animal
+* @return bool true if successfull, false if not
+*/
+function pets_core_update_animal($animaltype, $animalname, $animalinfo)
+{
+	$returnValue = false;
+
+	$result = pets_core_get_animal($animaltype, $animalname);	
+	
+	$returnValue = db_query("UPDATE {pets_animals} SET 
+							`name` = '%s', 
+							`type` = '%s', 
+							`breed` = '%s', 
+							`sex` = '%s', 
+							`born` = %d, 
+							`recieved` = %d, 
+							`received_from` = '%s', 
+							`description` = '%s', 
+							`cost` = '%s' 
+							WHERE `id` = %d",
+
+					$animalinfo['name'],
+					$animaltype,
+					$animalinfo['breed'],
+					$animalinfo['sex'],
+					$animalinfo['born'],
+					$animalinfo['aquired'],
+					$animalinfo['aquiredfrom'],
+					$animalinfo['description'],
+					$animalinfo['cost'],
+					$result[0]['id']
+				);
+				
+	return $returnValue;
+}
+
+/**
 * API Call - Deletes an animal from the database
 * @param string $animaltype type of animal. If null returns null. 
 * @param array $animalinfo multitude of information needed to add animal

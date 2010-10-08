@@ -34,6 +34,14 @@ function pets_cats_menu() {
       'type' => MENU_CALLBACK, // No navigation entry, just handle the request.
       'access arguments' => array('administer pets_cats'),
     ),
+    'cats/%/edit' => array(
+      'title' => 'Edit',
+      'page callback' => 'pets_cats_edit',
+      'page arguments' => array(1),
+      'access callback' => 'user_access',
+      'type' => MENU_CALLBACK, // No navigation entry, just handle the request.
+      'access arguments' => array('administer pets_cats'),
+    ),
     'cats/%/description' => array(
       'title' => 'About',
       'page callback' => 'pets_cats_about',
@@ -234,6 +242,99 @@ function pets_cats_add_form($form_state) {
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => t('New Cat'),
+    );
+   
+    return $form;
+}
+
+function pets_cats_edit($cat_id) {
+    $page_content = '';
+   
+    $page_content .= drupal_get_form('pets_cats_edit_form', $cat_id);
+	
+	return $page_content;
+}
+
+function pets_cats_edit_form_submit($form, &$form_state) {
+	$form_state['values'];
+	
+	$animalData = $form_state['values'];
+	$animalData['born'] = mktime(0, 0, 0, $form_state['values']['born']['month'], $form_state['values']['born']['day'], $form_state['values']['born']['year']);
+	$animalData['aquired'] = mktime(0, 0, 0, $form_state['values']['aquired']['month'], $form_state['values']['aquired']['day'], $form_state['values']['aquired']['year']);
+	
+	$result = module_invoke("pets_core", "edit_animal", "cat", $form_state['oldname'], $animalData);
+				
+	if($result) drupal_set_message(t('Your cat has been saved.'));
+	else drupal_set_message(t('There was an error saving the changes.'));
+	
+	//$form_state['redirect'] = 'cats';
+}
+
+function pets_cats_edit_form($form_state, $cat_id) {
+    
+	$result = module_invoke("pets_core", "get_animal", "cat", $cat_id);
+	
+	$form['oldname'] = array(
+        '#type' => 'hidden',
+        '#value' =>  $cat_id,
+    );
+	$form['name'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Name'),
+        '#description' => t("The cat's Name."),
+        '#required' => TRUE,
+        '#default_value' =>  $result[0]->name,
+    );
+    $form['breed'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Breed'),
+        '#description' => t("The cat's breed."),
+        '#default_value' =>  $result[0]->breed,
+    );
+    $form['sex'] = array(
+        '#type' => 'select',
+        '#title' => t('Sex'),
+        '#description' => t("The cat's sex."),
+		'#options' => array(
+			'male' => t('Male'),
+			'female' => t('Female'),
+        '#default_value' =>  $result[0]->sex,
+		),
+	);
+	$form['born'] = array(
+        '#type' => 'date',
+        '#title' => t('Birthdate'),
+        '#description' => t("The cat's Birthdate."),
+    );
+    $form['aquired'] = array(
+        '#type' => 'date',
+        '#title' => t('Aquired'),
+        '#description' => t("The date the cat was aquired."),
+    );
+    $form['aquiredfrom'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Aquired From'),
+        '#description' => t("Where you got the cat."),
+        '#default_value' =>  $result[0]->received_from,
+    );
+	$form['cost'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Cost'),
+        '#description' => t("What the cost was to purchase or adopt."),
+        '#default_value' =>  $result[0]->cost,
+    );
+	$form['description'] = array(
+        '#type' => 'textarea',
+        '#title' => t('Description'),
+        '#cols' => 50,
+        '#rows' => 5,
+        '#description' => t("Description of the cat."),
+        '#default_value' =>  $result[0]->description,
+    );
+    //Submit button:
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('Edit Cat'),
     );
    
     return $form;
