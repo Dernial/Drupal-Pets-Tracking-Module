@@ -73,10 +73,23 @@ function pets_cats_perm() {
   return array('access pets_cats content', 'administer pets_cats');
 }
 
+/**
+* Theme Stuffz
+* @return array An array of theme stuffz
+*/
+function pets_cats_theme() {
+  return array(
+    'about' => array(
+      'template' => 'pets_cats_about',
+      'arguments' => array('catinfo' => NULL),
+    ),
+  );
+}
+
 function pets_cats_select() {
 	$returnValue = "Please select a cat.<br />";
 	
-	$result = db_query_range('SELECT * FROM {pets_cats_cats}', 0, 10);
+	$result = db_query('SELECT * FROM {pets_cats_cats}');
 	while ($node = db_fetch_object($result)) {
 		$returnValue .= l($node->name, 'cats/' . $node->name);
 		
@@ -109,9 +122,11 @@ function pets_cats_select() {
 function pets_cats_about($cat_id) {
 	$output = '';
 
-	$result = db_query("SELECT * FROM {pets_cats_cats} c WHERE c.name = '$cat_id'");
-
+	$result = db_query("SELECT * FROM {pets_cats_cats} WHERE name = '$cat_id'");
+	
 	if ($node = db_fetch_object($result)) {
+		$output .= theme("about", $node);
+		/*
 		$output .= $node->name . ".<br />";
 		$output .= $node->description . "<br />";
 		$output .= "<br />";
@@ -120,7 +135,7 @@ function pets_cats_about($cat_id) {
 		$output .= "Date Born: ". date("F j, Y", $node->born)	. "<br />";
 		$output .= "Date Aquired: "	. date("F j, Y", $node->aquired)	. "<br />";
 		$output .= "Aquired From: "	. $node->aquiredfrom	. "<br />";
-		
+		*/
 		// Things to add:
 		// Last update
 		
