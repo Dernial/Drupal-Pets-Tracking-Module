@@ -1,0 +1,8 @@
+; $Id$
+name = Pets Core
+description = Core functions of the pets suite.
+core = 6.x
+
+dependencies[] = menu
+
+package = "Pets Suite"

@@ -78,29 +78,27 @@ function pets_cats_perm() {
 * @return array An array of theme stuffz
 */
 function pets_cats_theme() {
-  return array(
-    'about' => array(
-      'template' => 'pets_cats_about',
-      'arguments' => array('catinfo' => NULL),
-    ),
-  );
+	return array(
+		'about' => array(
+		'template' => 'pets_cats_about',
+		'arguments' => array('catinfo' => NULL),
+		),
+		'cat_link' => array(
+		'template' => 'pets_cats_cat_link',
+		'arguments' => array('catinfo' => NULL),
+		),
+	);
 }
 
 function pets_cats_select() {
 	$returnValue = "Please select a cat.<br />";
 	
-	$result = db_query('SELECT * FROM {pets_cats_cats}');
-	while ($node = db_fetch_object($result)) {
-		$returnValue .= l($node->name, 'cats/' . $node->name);
-		
-		// Show a delete link if there's permissions to
-		if(user_access('administer pets_cats'))
-		{
-			// Need to add in theme formatting here
-			$returnValue .= "     " . l("(delete)", 'cats/' . $node->name . "/delete");
+	$result = module_invoke("pets_core", "get_animal", "cat");
+	
+	if($result) {
+		foreach ($result as $node) {
+			$returnValue .= theme("cat_link", $node);
 		}
-		
-		$returnValue .=  "<br />";
 	}
 
 	// Show an Add link if there's permissions to.
@@ -122,20 +120,13 @@ function pets_cats_select() {
 function pets_cats_about($cat_id) {
 	$output = '';
 
-	$result = db_query("SELECT * FROM {pets_cats_cats} WHERE name = '$cat_id'");
+	$result = module_invoke("pets_core", "get_animal", "cat", $cat_id);
 	
-	if ($node = db_fetch_object($result)) {
-		$output .= theme("about", $node);
-		/*
-		$output .= $node->name . ".<br />";
-		$output .= $node->description . "<br />";
-		$output .= "<br />";
-		$output .= "Breed: "	. $node->breed	. "<br />";
-		$output .= "Sex: "		. $node->sex	. "<br />";
-		$output .= "Date Born: ". date("F j, Y", $node->born)	. "<br />";
-		$output .= "Date Aquired: "	. date("F j, Y", $node->aquired)	. "<br />";
-		$output .= "Aquired From: "	. $node->aquiredfrom	. "<br />";
-		*/
+	print_r($result);
+	
+	if ($result[0]) {
+		$output .= theme("about", $result[0]);
+
 		// Things to add:
 		// Last update
 		
@@ -149,7 +140,6 @@ function pets_cats_about($cat_id) {
 
 function pets_cats_maint($cat_id) {
   return "These are the maintnence items for $cat_id";
-
 }
 
 function pets_cats_pics($cat_id) {
@@ -192,18 +182,14 @@ function pets_cats_delete($cat_id) {
 }
 
 function pets_cats_add_form_submit($form, &$form_state) {
-	db_query("INSERT INTO {pets_cats_cats} (name, breed, sex, born, recieved, recievedFrom, description, cost) VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', %f)", 
-				$form_state['values']['name'],
-				$form_state['values']['breed'],
-				$form_state['values']['sex'],
-				mktime(0, 0, 0, $form_state['values']['born']['month'], $form_state['values']['born']['day'], $form_state['values']['born']['year']),
-				mktime(0, 0, 0, $form_state['values']['aquired']['month'], $form_state['values']['aquired']['day'], $form_state['values']['aquired']['year']),
-				$form_state['values']['aquiredfrom'],
-				$form_state['values']['description'],
-				$form_state['values']['cost']
-				);
+	$animalData = $form_state['values'];
+	$animalData['born'] = mktime(0, 0, 0, $form_state['values']['born']['month'], $form_state['values']['born']['day'], $form_state['values']['born']['year']);
+	$animalData['aquired'] = mktime(0, 0, 0, $form_state['values']['aquired']['month'], $form_state['values']['aquired']['day'], $form_state['values']['aquired']['year']);
+	
+	$result = module_invoke("pets_core", "add_animal", "cat", $animalData);
 				
-	drupal_set_message(t('Your cat has been saved.'));
+	if($result) drupal_set_message(t('Your cat has been saved.'));
+	else drupal_set_message(t('There was an error adding the cat.'));
 	
 	$form_state['redirect'] = 'cats';
 }

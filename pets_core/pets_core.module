@@ -1,0 +1,70 @@
+<?php
+// $Id$
+
+/**
+* API Call - Retrieves an animal or list of animals from the database
+* @param string $animaltype type of animal. If null returns null. 
+* @param string $animalname optional name of animal. If null will return an array of the type of animal. 
+* @return array An array of animal information based on passed in parameters
+*/
+function pets_core_get_animal($animaltype = null, $animalname = null)
+{
+	$returnValue = null;
+	
+	if($animaltype)
+	{
+		$query = "SELECT * FROM {pets_animals} WHERE type = '$animaltype'";
+		
+		if($animalname)
+			$query .= " AND name = '$animalname'";
+		
+		$result = db_query($query);
+		
+		while ($node = db_fetch_object($result)) {
+			$returnValue[] = $node;
+		}
+	}
+	return $returnValue;
+}
+
+/**
+* API Call - Adds an animal to the database
+* @param string $animaltype type of animal. If null returns null. 
+* @param array $animalinfo multitude of information needed to add animal
+* @return bool true if successfull, false if not
+*/
+function pets_core_add_animal($animaltype, $animalinfo)
+{
+	$returnValue = false;
+	
+	$returnValue = db_query("INSERT INTO {pets_animals} (name, type, breed, sex, born, recieved, received_from, description, cost) " . 
+												"VALUES ('%s', '%s', '%s', '%s', %d, %d, '%s', '%s', %f)", 
+				$animalinfo['name'],
+				$animaltype,
+				$animalinfo['breed'],
+				$animalinfo['sex'],
+				$animalinfo['born'],
+				$animalinfo['aquired'],
+				$animalinfo['aquiredfrom'],
+				$animalinfo['description'],
+				$animalinfo['cost']
+				);
+				
+	return $returnValue;
+}
+
+/**
+* API Call - Deletes an animal from the database
+* @param string $animaltype type of animal. If null returns null. 
+* @param array $animalinfo multitude of information needed to add animal
+* @return bool true if successfull, false if not
+*/
+function pets_core_delete_animal($animaltype, $animalinfo)
+{
+	$returnValue = false;
+	
+	$result = pets_core_get_animal($animaltype, $animalname);
+	$returnValue = db_query("DELETE FROM {pets_animals} WHERE id = '". $result->id . "'"); 
+				
+	return $returnValue;
+}
