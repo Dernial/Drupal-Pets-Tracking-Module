@@ -16,7 +16,7 @@ function pets_core_get_animal($animaltype = null, $animalid = null)
 		$query = "SELECT * FROM {pets_animals} WHERE type = '$animaltype'";
 		
 		if($animalid)
-			$query .= " AND id = '$animalid'";
+			$query .= " AND pet_id = '$animalid'";
 		
 		$result = db_query($query);
 		
@@ -76,7 +76,7 @@ function pets_core_update_animal($animaltype, $animalid, $animalinfo)
 							`received_from` = '%s', 
 							`description` = '%s', 
 							`cost` = '%s' 
-							WHERE `id` = %d",
+							WHERE `pet_id` = %d",
 
 					$animalinfo['name'],
 					$animaltype,
@@ -103,7 +103,33 @@ function pets_core_delete_animal($animaltype, $animalid)
 {
 	$returnValue = false;
 	
-	$returnValue = db_query("DELETE FROM {pets_animals} WHERE id = '". $animalid . "'"); 
+	$returnValue = db_query("DELETE FROM {pets_animals} WHERE `pet_id` = '". $animalid . "'"); 
 				
+	return $returnValue;
+}
+
+/**
+* API Call - Retrieves an event or a list of events from the database for an animal id
+* @param int $animalid id of animal. 
+* @param int $eventid the id of the event. If null will return an array of all events for that animal. 
+* @return array An array of events for the animal id.
+*/
+function pets_core_get_events($animalid = null, $eventid = null)
+{
+	$returnValue = null;
+	
+	if($animalid)
+	{
+		$query = "SELECT * FROM {pets_events} WHERE `pet_id` = '$animalid'";
+		
+		if($eventid)
+			$query .= " AND `event_id` = '$eventid'";
+		
+		$result = db_query($query);
+		
+		while ($node = db_fetch_object($result)) {
+			$returnValue[] = $node;
+		}
+	}
 	return $returnValue;
 }

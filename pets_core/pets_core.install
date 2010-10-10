@@ -46,7 +46,7 @@ CREATE TABLE `pets_cats_cats` (
 	
 	$schema['pets_animals'] = array(
 		'fields' => array(
-			'id' => array('type' => 'serial', 'size' => 'big', 'unsigned' => TRUE, 'not null' => TRUE, 'description'=> "Pet ID"),
+			'pet_id' => array('type' => 'serial', 'size' => 'big', 'unsigned' => TRUE, 'not null' => TRUE, 'description'=> "Pet ID"),
 			'type' => array('type' => 'text', 'not null' => TRUE),
 			'name' => array('type' => 'text', 'not null' => TRUE),
 			'breed' => array('type' => 'text', 'not null' => FALSE),
@@ -57,9 +57,38 @@ CREATE TABLE `pets_cats_cats` (
 			'recieved' => array('type' => 'int', 'not null' => TRUE, 'default' => 0,
 							'description'=> "Timestamp (Unix Timestamp, which is limited to values above Jan 1, 1970)"),
 			'received_from' => array('type' => 'text', 'not null' => FALSE),
-			'cost' => array('type' => 'float', 'unsigned' => TRUE, 'not null' => FALSE,),  //NOTE:  On MySQL, text fields cannot have default values.
+			'cost' => array('type' => 'float', 'unsigned' => TRUE, 'not null' => FALSE),
 		),
-		'primary key' => array('id') //Don't put a comma after primary key definition, since doing so will cause database errors.
+		'primary key' => array('pet_id') //Don't put a comma after primary key definition, since doing so will cause database errors.
+	);
+/*
+
+CREATE TABLE `lotnpets`.`pets_events` (
+`event_id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+`pet_id` INT NOT NULL ,
+`activity` TEXT NOT NULL ,
+`type` TEXT NOT NULL ,
+`start_date` INT NOT NULL ,
+`next_date` INT NOT NULL ,
+`schedule` TEXT NOT NULL ,
+`notes` TEXT NOT NULL
+) ENGINE = MYISAM ;
+
+*/
+	$schema['pets_events'] = array(
+		'fields' => array(
+			'event_id' => array('type' => 'serial', 'size' => 'big', 'unsigned' => TRUE, 'not null' => TRUE, 'description'=> "Event ID"),
+			'pet_id' => array('type' => 'int', 'size' => 'big', 'unsigned' => TRUE, 'not null' => TRUE),
+			'activity' => array('type' => 'text', 'not null' => TRUE),
+			'type' => array('type' => 'text', 'not null' => FALSE),
+			'start_date' => array('type' => 'int', 'not null' => TRUE, 'default' => 0,
+							'description'=> "Timestamp (Unix Timestamp, which is limited to values above Jan 1, 1970)"),
+			'next_date' => array('type' => 'int', 'not null' => TRUE, 'default' => 0,
+							'description'=> "Timestamp (Unix Timestamp, which is limited to values above Jan 1, 1970)"),
+			'schedule' => array('type' => 'text', 'not null' => FALSE),
+			'notes' => array('type' => 'text', 'not null' => FALSE),
+		),
+		'primary key' => array('event_id') //Don't put a comma after primary key definition, since doing so will cause database errors.
 	);
 
 	return $schema;

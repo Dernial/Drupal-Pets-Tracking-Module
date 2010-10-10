@@ -95,6 +95,14 @@ function pets_cats_theme() {
 		'template' => 'pets_cats_cat_link',
 		'arguments' => array('catinfo' => NULL),
 		),
+		'cat_schedule_base' => array(
+		'template' => 'pets_cats_schedule_base',
+		'arguments' => array('catinfo' => NULL, 'events' => NULL),
+		),
+		'cat_schedule_item' => array(
+		'template' => 'pets_cats_schedule_item',
+		'arguments' => array('item' => NULL),
+		),
 	);
 }
 
@@ -145,7 +153,11 @@ function pets_cats_about($cat_id) {
 }
 
 function pets_cats_maint($cat_id) {
-  return "These are the maintnence items for $cat_id";
+	
+	$cat = module_invoke("pets_core", "get_animal", "cat", $cat_id);
+	$events = module_invoke("pets_core", "get_events", $cat_id);
+		
+	return theme("cat_schedule_base", $cat, $events);
 }
 
 function pets_cats_pics($cat_id) {
@@ -173,7 +185,7 @@ function pets_cats_delete($cat_id) {
 }
 
 function pets_cats_delete_form($form_state, $cat_id) {
-		$form['id'] = array(
+		$form['pet_id'] = array(
         '#type' => 'hidden',
         '#value' =>  $cat_id,
     );
@@ -182,7 +194,7 @@ function pets_cats_delete_form($form_state, $cat_id) {
 }
 
 function pets_cats_delete_form_submit($form, &$form_state) {
-	$result = module_invoke("pets_core", "delete_animal", "cat", $form_state['values']['id']);
+	$result = module_invoke("pets_core", "delete_animal", "cat", $form_state['values']['pet_id']);
 				
 	if($result) drupal_set_message(t('Your cat has been deleted.'));
 	else drupal_set_message(t('There was an error deleting the cat.'));
