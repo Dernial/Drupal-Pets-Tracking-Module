@@ -2,8 +2,6 @@
 // $Id$
 ?>
 
-		<?php dvm($item); ?>
-
 	<tr>
 		<td>
 			<?php print $item->activity; ?>
@@ -21,6 +19,3 @@
 			<?php if(user_access('administer pets_cats')) print l("(edit)", 'cats/' . $catinfo->id . "/maintnence/" . $item->id . "/edit"); ?>
 		</td>
 	</tr>
-
-
-</table>

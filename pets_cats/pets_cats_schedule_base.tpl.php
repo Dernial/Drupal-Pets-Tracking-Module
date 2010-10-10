@@ -22,8 +22,6 @@
 		</td>
 	</tr>
 	
-	<?php dvm($events); ?>
-	
-	<?php if($eventinfo) foreach($events as $event) print theme("cat_schedule_item", $event); ?>
+	<?php if($events) foreach($events as $event) print theme("cat_schedule_item", $event); ?>
 
 </table>
